@@ -18,10 +18,10 @@ function crearTexturaAtmosfera() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   const lucesVerdes = [
-    { x: 512, y: 260, r: 360, color: 'rgba(16, 185, 129, 0.30)' },
-    { x: 260, y: 250, r: 260, color: 'rgba(5, 150, 105, 0.22)' },
-    { x: 760, y: 250, r: 260, color: 'rgba(52, 211, 153, 0.22)' },
-    { x: 512, y: 140, r: 280, color: 'rgba(16, 185, 129, 0.18)' }
+    { x: 512, y: 260, r: 340, color: 'rgba(16, 185, 129, 0.26)' },
+    { x: 260, y: 250, r: 260, color: 'rgba(5, 150, 105, 0.20)' },
+    { x: 760, y: 250, r: 260, color: 'rgba(20, 184, 166, 0.22)' },
+    { x: 512, y: 140, r: 280, color: 'rgba(14, 165, 233, 0.20)' }
   ];
 
   lucesVerdes.forEach((n) => {
@@ -80,7 +80,7 @@ export default function TerminalTVA() {
 
     // 1. Escena, Cámara y Renderizador
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x031a1c, 0.0065);
+    scene.fog = new THREE.FogExp2(0x031a1c, 0.0068);
 
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
@@ -88,7 +88,7 @@ export default function TerminalTVA() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.22;
+    renderer.toneMappingExposure = 1.18;
     currentMount.appendChild(renderer.domElement);
 
     // 2. Cúpula Atmosférica de Fondo
@@ -111,48 +111,49 @@ export default function TerminalTVA() {
     // 4. Grupo Principal de Yggdrasil
     const yggdrasilGroup = new THREE.Group();
 
-    // A. Tronco Central Luminoso + Corazón Verde Loki Palpitante
-    const coreTrunkGeo = new THREE.CylinderGeometry(1.75, 3.35, 18.5, 32, 16, true);
+    // A. Tronco Central Luminoso + Luz Interna Palpitante (~60% de intensidad)
+    const coreTrunkGeo = new THREE.CylinderGeometry(1.7, 3.3, 18, 32, 16, true);
     const coreTrunkMat = new THREE.MeshStandardMaterial({
-      color: 0x064e3b,
+      color: 0x043927,
       emissive: 0x10b981,
-      emissiveIntensity: 2.2,
-      roughness: 0.2,
-      metalness: 0.45
+      emissiveIntensity: 1.35,
+      roughness: 0.28,
+      metalness: 0.65
     });
     const coreTrunk = new THREE.Mesh(coreTrunkGeo, coreTrunkMat);
     coreTrunk.position.y = -1.5;
     yggdrasilGroup.add(coreTrunk);
 
-    // Núcleo / corazón interior brillante que irradia desde el centro del tronco
-    const heartCoreGeo = new THREE.CylinderGeometry(1.15, 2.2, 16.5, 24);
-    const heartCoreMat = new THREE.MeshStandardMaterial({
-      color: 0x34d399,
-      emissive: 0x10b981,
-      emissiveIntensity: 3.0,
-      roughness: 0.15,
-      metalness: 0.1,
+    // Núcleo interior luminoso dentro del tronco (sin invadir el entorno)
+    const innerGlowGeo = new THREE.CylinderGeometry(1.05, 2.05, 15.5, 24);
+    const innerGlowMat = new THREE.MeshStandardMaterial({
+      color: 0x4ade80,
+      emissive: 0x22c55e,
+      emissiveIntensity: 1.5,
+      roughness: 0.25,
+      metalness: 0.15,
       transparent: true,
-      opacity: 0.9,
-      blending: THREE.AdditiveBlending
-    });
-    const heartCore = new THREE.Mesh(heartCoreGeo, heartCoreMat);
-    heartCore.position.y = -1.5;
-    yggdrasilGroup.add(heartCore);
-
-    // Halo resplandeciente alrededor del centro del tronco
-    const heartAuraGeo = new THREE.SphereGeometry(6.2, 32, 24);
-    const heartAuraMat = new THREE.MeshBasicMaterial({
-      color: 0x10b981,
-      transparent: true,
-      opacity: 0.16,
+      opacity: 0.58,
       blending: THREE.AdditiveBlending,
       depthWrite: false
     });
-    const heartAura = new THREE.Mesh(heartAuraGeo, heartAuraMat);
-    heartAura.scale.set(0.85, 1.45, 0.85);
-    heartAura.position.set(0, -1.5, 0);
-    yggdrasilGroup.add(heartAura);
+    const innerGlow = new THREE.Mesh(innerGlowGeo, innerGlowMat);
+    innerGlow.position.y = -1.5;
+    yggdrasilGroup.add(innerGlow);
+
+    // Halo sutil concentrado en el centro del tronco
+    const centerAuraGeo = new THREE.SphereGeometry(4.6, 28, 20);
+    const centerAuraMat = new THREE.MeshBasicMaterial({
+      color: 0x22c55e,
+      transparent: true,
+      opacity: 0.08,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    const centerAura = new THREE.Mesh(centerAuraGeo, centerAuraMat);
+    centerAura.scale.set(0.75, 1.35, 0.75);
+    centerAura.position.set(0, -1.5, 0);
+    yggdrasilGroup.add(centerAura);
 
     const barkGroup = new THREE.Group();
     for (let i = 0; i < 14; i++) {
@@ -160,13 +161,13 @@ export default function TerminalTVA() {
       const barkGeo = new THREE.CylinderGeometry(0.65, 1.15, 17.5, 8, 8);
       const barkMat = new THREE.MeshStandardMaterial({
         color: 0x01120c,
-        emissive: 0x065f46,
-        emissiveIntensity: 0.45,
-        roughness: 0.85,
+        emissive: 0x064e3b,
+        emissiveIntensity: 0.32,
+        roughness: 0.9,
         metalness: 0.3
       });
       const barkPiece = new THREE.Mesh(barkGeo, barkMat);
-      barkPiece.position.set(Math.cos(angle) * 2.15, -1.5, Math.sin(angle) * 2.15);
+      barkPiece.position.set(Math.cos(angle) * 2.1, -1.5, Math.sin(angle) * 2.1);
       barkPiece.rotation.z = (Math.random() - 0.5) * 0.22;
       barkGroup.add(barkPiece);
     }
@@ -176,9 +177,9 @@ export default function TerminalTVA() {
     const rootCollarGeo = new THREE.CylinderGeometry(2.7, 4.4, 3.8, 32);
     const rootCollarMat = new THREE.MeshStandardMaterial({
       color: 0x01160f,
-      emissive: 0x047857,
-      emissiveIntensity: 0.65,
-      roughness: 0.8,
+      emissive: 0x022c22,
+      emissiveIntensity: 0.45,
+      roughness: 0.85,
       metalness: 0.35
     });
     const rootCollar = new THREE.Mesh(rootCollarGeo, rootCollarMat);
@@ -214,9 +215,9 @@ export default function TerminalTVA() {
       const isDeepLayer = i % 3 === 0;
       const rootMat = new THREE.MeshStandardMaterial({
         color: isDeepLayer ? 0x01140d : 0x022419,
-        emissive: isDeepLayer ? 0x047857 : 0x10b981,
-        emissiveIntensity: isDeepLayer ? 0.55 : 0.85,
-        roughness: 0.78,
+        emissive: isDeepLayer ? 0x022c22 : 0x064e3b,
+        emissiveIntensity: isDeepLayer ? 0.45 : 0.72,
+        roughness: 0.82,
         metalness: 0.35
       });
       rootsGroup.add(new THREE.Mesh(rootGeo, rootMat));
@@ -237,8 +238,8 @@ export default function TerminalTVA() {
       const branchMat = new THREE.MeshStandardMaterial({
         color: 0x012e1f,
         emissive: 0x10b981,
-        emissiveIntensity: 0.95,
-        roughness: 0.35,
+        emissiveIntensity: 0.85,
+        roughness: 0.4,
         metalness: 0.5
       });
       branchesGroup.add(new THREE.Mesh(mainGeo, branchMat));
@@ -253,11 +254,11 @@ export default function TerminalTVA() {
         const subCurve = new THREE.CatmullRomCurve3([midPoint, endPoint]);
         const subGeo = new THREE.TubeGeometry(subCurve, 18, 0.14, 6, false);
         const subMat = new THREE.MeshStandardMaterial({
-          color: 0x022c22,
-          emissive: 0x10b981,
-          emissiveIntensity: 0.8,
+          color: 0x0f172a,
+          emissive: 0x3b82f6,
+          emissiveIntensity: 0.85,
           roughness: 0.3,
-          metalness: 0.55
+          metalness: 0.6
         });
         branchesGroup.add(new THREE.Mesh(subGeo, subMat));
       }
@@ -272,21 +273,21 @@ export default function TerminalTVA() {
       const geo = new THREE.IcosahedronGeometry(radius, 2);
 
       const type = Math.random();
-      let col = 0x10b981, emissiveCol = 0x059669;
-      if (type > 0.35) {
-        col = 0x34d399; emissiveCol = 0x10b981;
-      } else if (type > 0.15) {
-        col = 0x0d9488; emissiveCol = 0x047857;
+      let col = 0x2563eb, emissiveCol = 0x1d4ed8;
+      if (type > 0.52) {
+        col = 0x10b981; emissiveCol = 0x047857;
+      } else if (type > 0.25) {
+        col = 0x7c3aed; emissiveCol = 0x5b21b6;
       }
 
       const mat = new THREE.MeshStandardMaterial({
         color: col,
         emissive: emissiveCol,
-        emissiveIntensity: 0.72,
-        roughness: 0.28,
+        emissiveIntensity: 0.90,
+        roughness: 0.22,
         metalness: 0.25,
         transparent: true,
-        opacity: 0.42,
+        opacity: 0.52,
         blending: THREE.AdditiveBlending
       });
 
@@ -320,33 +321,33 @@ export default function TerminalTVA() {
 
     const particlesMat = new THREE.PointsMaterial({
       size: 0.55,
-      color: 0x6ee7b7,
+      color: 0x7dd3fc,
       transparent: true,
-      opacity: 0.85,
+      opacity: 0.9,
       blending: THREE.AdditiveBlending
     });
     const backgroundCosmos = new THREE.Points(particlesGeo, particlesMat);
     scene.add(backgroundCosmos);
 
-    // 6. Iluminación (con corazón verde Loki en el centro del tronco)
-    const ambientLight = new THREE.AmbientLight(0x03261d, 1.15);
+    // 6. Iluminación (luz central moderada al ~60% para preservar el entorno)
+    const ambientLight = new THREE.AmbientLight(0x06373a, 1.25);
     scene.add(ambientLight);
 
-    const coreLight = new THREE.PointLight(0x10b981, 900, 175);
-    coreLight.position.set(0, -1.5, 4);
+    const coreLight = new THREE.PointLight(0x22c55e, 540, 125);
+    coreLight.position.set(0, -1.5, 5);
     scene.add(coreLight);
 
-    const bottomLight = new THREE.PointLight(0x059669, 360, 140);
+    const bottomLight = new THREE.PointLight(0x047857, 260, 125);
     bottomLight.position.set(0, -16, 14);
     scene.add(bottomLight);
 
-    const topLight = new THREE.PointLight(0x34d399, 220, 150);
+    const topLight = new THREE.PointLight(0x3b82f6, 440, 165);
     topLight.position.set(0, 24, 20);
     scene.add(topLight);
 
     camera.position.set(0, 4, 38);
 
-    // 7. Animación con latido verde Loki desde el centro del tronco
+    // 7. Animación con latido moderado en el centro del tronco
     let clock = new THREE.Clock();
     let animationFrameId;
 
@@ -354,20 +355,21 @@ export default function TerminalTVA() {
       animationFrameId = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
 
-      // Pulso / latido suave estilo Loki (doble onda sutil + respiración)
-      const latido = Math.pow(Math.max(0, Math.sin(elapsedTime * 2.2)), 2);
-      const respiracion = Math.sin(elapsedTime * 1.4) * 0.5 + 0.5;
-      const pulso = respiracion * 0.6 + latido * 0.4;
+      // Pulso orgánico moderado (~60% de intensidad máxima)
+      const latido = Math.pow(Math.max(0, Math.sin(elapsedTime * 2.0)), 2);
+      const respiracion = Math.sin(elapsedTime * 1.3) * 0.5 + 0.5;
+      const pulso = respiracion * 0.65 + latido * 0.35; // Entre 0.0 y ~0.65
 
-      coreTrunkMat.emissiveIntensity = 1.8 + pulso * 1.6;
-      heartCoreMat.emissiveIntensity = 2.4 + pulso * 2.4;
-      heartCore.scale.set(1 + pulso * 0.12, 1, 1 + pulso * 0.12);
+      coreTrunkMat.emissiveIntensity = 1.05 + pulso * 0.85;
+      innerGlowMat.emissiveIntensity = 1.15 + pulso * 0.95;
+      innerGlowMat.opacity = 0.45 + pulso * 0.22;
+      innerGlow.scale.set(1 + pulso * 0.08, 1, 1 + pulso * 0.08);
 
-      heartAuraMat.opacity = 0.12 + pulso * 0.14;
-      const auraScale = 0.85 + pulso * 0.12;
-      heartAura.scale.set(auraScale, 1.45 + pulso * 0.15, auraScale);
+      centerAuraMat.opacity = 0.05 + pulso * 0.06;
+      const auraScale = 0.72 + pulso * 0.08;
+      centerAura.scale.set(auraScale, 1.32 + pulso * 0.08, auraScale);
 
-      coreLight.intensity = 750 + pulso * 550;
+      coreLight.intensity = 420 + pulso * 240;
 
       yggdrasilGroup.rotation.y += 0.0005;
       branchesGroup.rotation.z = Math.sin(elapsedTime * 1.1) * 0.022;
@@ -398,10 +400,10 @@ export default function TerminalTVA() {
       controls.dispose();
       skyGeo.dispose();
       skyMat.dispose();
-      heartCoreGeo.dispose();
-      heartCoreMat.dispose();
-      heartAuraGeo.dispose();
-      heartAuraMat.dispose();
+      innerGlowGeo.dispose();
+      innerGlowMat.dispose();
+      centerAuraGeo.dispose();
+      centerAuraMat.dispose();
       if (currentMount && renderer.domElement) {
         currentMount.removeChild(renderer.domElement);
       }
