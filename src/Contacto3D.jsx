@@ -71,6 +71,7 @@ function crearTexturaAtmosfera() {
 export default function TerminalTVA() {
   const [form, setForm] = useState({ nombre: '', email: '', mensaje: '' });
   const [respuesta, setRespuesta] = useState('');
+  const [panelOculto, setPanelOculto] = useState(false);
   const mountRef = useRef(null);
 
   useEffect(() => {
