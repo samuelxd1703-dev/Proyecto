@@ -88,7 +88,7 @@ export default function TerminalTVA() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.18;
+    renderer.toneMappingExposure = 1.15;
     currentMount.appendChild(renderer.domElement);
 
     // 2. Cúpula Atmosférica de Fondo
@@ -111,29 +111,29 @@ export default function TerminalTVA() {
     // 4. Grupo Principal de Yggdrasil
     const yggdrasilGroup = new THREE.Group();
 
-    // A. Tronco Central Luminoso + Luz Interna Palpitante (~60% de intensidad)
+    // A. Tronco Central Luminoso + Luz Interna Palpitante (~30%)
     const coreTrunkGeo = new THREE.CylinderGeometry(1.7, 3.3, 18, 32, 16, true);
     const coreTrunkMat = new THREE.MeshStandardMaterial({
-      color: 0x043927,
+      color: 0x033324,
       emissive: 0x10b981,
-      emissiveIntensity: 1.35,
-      roughness: 0.28,
-      metalness: 0.65
+      emissiveIntensity: 0.95,
+      roughness: 0.3,
+      metalness: 0.7
     });
     const coreTrunk = new THREE.Mesh(coreTrunkGeo, coreTrunkMat);
     coreTrunk.position.y = -1.5;
     yggdrasilGroup.add(coreTrunk);
 
-    // Núcleo interior luminoso dentro del tronco (sin invadir el entorno)
-    const innerGlowGeo = new THREE.CylinderGeometry(1.05, 2.05, 15.5, 24);
+    // Núcleo interior sutil al ~30% de intensidad
+    const innerGlowGeo = new THREE.CylinderGeometry(1.0, 1.95, 14.5, 24);
     const innerGlowMat = new THREE.MeshStandardMaterial({
-      color: 0x4ade80,
-      emissive: 0x22c55e,
-      emissiveIntensity: 1.5,
-      roughness: 0.25,
-      metalness: 0.15,
+      color: 0x34d399,
+      emissive: 0x10b981,
+      emissiveIntensity: 0.75,
+      roughness: 0.3,
+      metalness: 0.2,
       transparent: true,
-      opacity: 0.58,
+      opacity: 0.3,
       blending: THREE.AdditiveBlending,
       depthWrite: false
     });
@@ -141,17 +141,17 @@ export default function TerminalTVA() {
     innerGlow.position.y = -1.5;
     yggdrasilGroup.add(innerGlow);
 
-    // Halo sutil concentrado en el centro del tronco
-    const centerAuraGeo = new THREE.SphereGeometry(4.6, 28, 20);
+    // Halo suave concentrado en el centro del tronco (~30%)
+    const centerAuraGeo = new THREE.SphereGeometry(4.2, 24, 18);
     const centerAuraMat = new THREE.MeshBasicMaterial({
-      color: 0x22c55e,
+      color: 0x10b981,
       transparent: true,
-      opacity: 0.08,
+      opacity: 0.04,
       blending: THREE.AdditiveBlending,
       depthWrite: false
     });
     const centerAura = new THREE.Mesh(centerAuraGeo, centerAuraMat);
-    centerAura.scale.set(0.75, 1.35, 0.75);
+    centerAura.scale.set(0.7, 1.25, 0.7);
     centerAura.position.set(0, -1.5, 0);
     yggdrasilGroup.add(centerAura);
 
@@ -161,8 +161,8 @@ export default function TerminalTVA() {
       const barkGeo = new THREE.CylinderGeometry(0.65, 1.15, 17.5, 8, 8);
       const barkMat = new THREE.MeshStandardMaterial({
         color: 0x01120c,
-        emissive: 0x064e3b,
-        emissiveIntensity: 0.32,
+        emissive: 0x022c22,
+        emissiveIntensity: 0.3,
         roughness: 0.9,
         metalness: 0.3
       });
@@ -329,11 +329,11 @@ export default function TerminalTVA() {
     const backgroundCosmos = new THREE.Points(particlesGeo, particlesMat);
     scene.add(backgroundCosmos);
 
-    // 6. Iluminación (luz central moderada al ~60% para preservar el entorno)
-    const ambientLight = new THREE.AmbientLight(0x06373a, 1.25);
+    // 6. Iluminación (luz central sutil al ~30% para mantener el entorno intacto)
+    const ambientLight = new THREE.AmbientLight(0x06373a, 1.3);
     scene.add(ambientLight);
 
-    const coreLight = new THREE.PointLight(0x22c55e, 540, 125);
+    const coreLight = new THREE.PointLight(0x10b981, 210, 105);
     coreLight.position.set(0, -1.5, 5);
     scene.add(coreLight);
 
@@ -341,13 +341,13 @@ export default function TerminalTVA() {
     bottomLight.position.set(0, -16, 14);
     scene.add(bottomLight);
 
-    const topLight = new THREE.PointLight(0x3b82f6, 440, 165);
+    const topLight = new THREE.PointLight(0x3b82f6, 460, 165);
     topLight.position.set(0, 24, 20);
     scene.add(topLight);
 
     camera.position.set(0, 4, 38);
 
-    // 7. Animación con latido moderado en el centro del tronco
+    // 7. Animación con latido sutil al ~30% en el centro del tronco
     let clock = new THREE.Clock();
     let animationFrameId;
 
@@ -355,21 +355,21 @@ export default function TerminalTVA() {
       animationFrameId = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
 
-      // Pulso orgánico moderado (~60% de intensidad máxima)
+      // Pulso suave al ~30% de intensidad
       const latido = Math.pow(Math.max(0, Math.sin(elapsedTime * 2.0)), 2);
       const respiracion = Math.sin(elapsedTime * 1.3) * 0.5 + 0.5;
-      const pulso = respiracion * 0.65 + latido * 0.35; // Entre 0.0 y ~0.65
+      const pulso = (respiracion * 0.65 + latido * 0.35) * 0.3;
 
-      coreTrunkMat.emissiveIntensity = 1.05 + pulso * 0.85;
-      innerGlowMat.emissiveIntensity = 1.15 + pulso * 0.95;
-      innerGlowMat.opacity = 0.45 + pulso * 0.22;
-      innerGlow.scale.set(1 + pulso * 0.08, 1, 1 + pulso * 0.08);
+      coreTrunkMat.emissiveIntensity = 0.8 + pulso * 0.65;
+      innerGlowMat.emissiveIntensity = 0.55 + pulso * 0.65;
+      innerGlowMat.opacity = 0.22 + pulso * 0.14;
+      innerGlow.scale.set(1 + pulso * 0.06, 1, 1 + pulso * 0.06);
 
-      centerAuraMat.opacity = 0.05 + pulso * 0.06;
-      const auraScale = 0.72 + pulso * 0.08;
-      centerAura.scale.set(auraScale, 1.32 + pulso * 0.08, auraScale);
+      centerAuraMat.opacity = 0.025 + pulso * 0.035;
+      const auraScale = 0.68 + pulso * 0.06;
+      centerAura.scale.set(auraScale, 1.25 + pulso * 0.06, auraScale);
 
-      coreLight.intensity = 420 + pulso * 240;
+      coreLight.intensity = 180 + pulso * 110;
 
       yggdrasilGroup.rotation.y += 0.0005;
       branchesGroup.rotation.z = Math.sin(elapsedTime * 1.1) * 0.022;
