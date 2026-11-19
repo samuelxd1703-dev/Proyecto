@@ -84,7 +84,7 @@ export default function TerminalTVA() {
 
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
-    
+
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -160,22 +160,21 @@ export default function TerminalTVA() {
     const totalRoots = 75;
     for (let i = 0; i < totalRoots; i++) {
       const angle = (i / totalRoots) * Math.PI * 2 + (Math.random() - 0.5) * 0.12;
-      
-      // Curvas modificadas: se expanden agresivamente hacia los costados (horizontal)
+
       const curve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(Math.cos(angle) * 2.3, -9.8, Math.sin(angle) * 2.3),
         new THREE.Vector3(
-          Math.cos(angle) * 8.5 + Math.sin(i) * 2.2,   // Desplazamiento lateral ondulado
+          Math.cos(angle) * 8.5 + Math.sin(i) * 2.2,
           -13.5 + Math.sin(i * 3) * 0.8,
           Math.sin(angle) * 8.5 + Math.cos(i) * 2.2
         ),
         new THREE.Vector3(
-          Math.cos(angle) * 15.0 + Math.cos(i * 2) * 2.8, // Expansión masiva a los costados
+          Math.cos(angle) * 15.0 + Math.cos(i * 2) * 2.8,
           -17.5 + Math.sin(i * 2) * 1.0,
           Math.sin(angle) * 15.0 + Math.sin(i * 2) * 2.8
         ),
         new THREE.Vector3(
-          Math.cos(angle) * 21.0,                       // Extremo ancho y bajo hacia los lados
+          Math.cos(angle) * 21.0,
           -20.5 - Math.random() * 2.0,
           Math.sin(angle) * 21.0
         )
@@ -197,12 +196,12 @@ export default function TerminalTVA() {
     // D. Ramas Superiores
     const branchesGroup = new THREE.Group();
     const mainBranches = 18;
-    
+
     for (let i = 0; i < mainBranches; i++) {
       const angle = (i / mainBranches) * Math.PI * 2 + (Math.random() * 0.2);
       const basePoint = new THREE.Vector3(Math.cos(angle) * 1.4, 5.5, Math.sin(angle) * 1.4);
       const midPoint = new THREE.Vector3(Math.cos(angle) * 7.2, 10.5 + Math.sin(i) * 1.8, Math.sin(angle) * 7.2);
-      
+
       const mainCurve = new THREE.CatmullRomCurve3([basePoint, midPoint]);
       const mainGeo = new THREE.TubeGeometry(mainCurve, 24, 0.28, 8, false);
       const branchMat = new THREE.MeshStandardMaterial({
@@ -237,11 +236,11 @@ export default function TerminalTVA() {
 
     // E. COPA SUPERIOR MASIVA Y CON MUCHO MÁS VOLUMEN
     const cloudsGroup = new THREE.Group();
-    const canopyCount = 450; // Aumentado significativamente para dar densidad suprema arriba
+    const canopyCount = 450;
     for (let i = 0; i < canopyCount; i++) {
       const radius = Math.random() * 1.8 + 1.4;
       const geo = new THREE.IcosahedronGeometry(radius, 2);
-      
+
       const type = Math.random();
       let col = 0x2563eb, emissiveCol = 0x1d4ed8;
       if (type > 0.52) {
@@ -263,15 +262,14 @@ export default function TerminalTVA() {
 
       const leafCluster = new THREE.Mesh(geo, mat);
 
-      // Distribución volumétrica masiva en la parte alta
       const u = Math.random();
       const v = Math.random();
       const theta = u * 2.0 * Math.PI;
       const phi = Math.acos(2.0 * v - 1.0);
       const rNorm = Math.cbrt(Math.random());
 
-      const x = rNorm * Math.sin(phi) * Math.cos(theta) * 19.0; // Mayor amplitud horizontal
-      const yOffset = Math.abs(rNorm * Math.cos(phi)) * 11.5;   // Mayor altura superior
+      const x = rNorm * Math.sin(phi) * Math.cos(theta) * 19.0;
+      const yOffset = Math.abs(rNorm * Math.cos(phi)) * 11.5;
       const z = rNorm * Math.sin(phi) * Math.sin(theta) * 19.0;
 
       leafCluster.position.set(x, 10.0 + yOffset, z);
@@ -289,7 +287,7 @@ export default function TerminalTVA() {
       positions[i] = (Math.random() - 0.5) * 190;
     }
     particlesGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    
+
     const particlesMat = new THREE.PointsMaterial({
       size: 0.55,
       color: 0x7dd3fc,
@@ -321,7 +319,7 @@ export default function TerminalTVA() {
     // 7. Animación
     let clock = new THREE.Clock();
     let animationFrameId;
-    
+
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
@@ -376,70 +374,92 @@ export default function TerminalTVA() {
     }
   };
 
+  // --- AQUÍ EMPIEZA EL RETURN DEL COMPONENTE ---
   return (
     <div className="relative min-h-screen w-full bg-[#031a1c] text-emerald-400 flex flex-col items-center justify-center p-4 md:p-6 overflow-hidden">
       <div ref={mountRef} className="fixed inset-0 z-0 opacity-100 pointer-events-auto cursor-grab active:cursor-grabbing" />
 
-      <div className="relative z-10 bg-stone-950/85 backdrop-blur-xl p-6 md:p-8 rounded-none border-2 border-emerald-500/60 shadow-[0_0_90px_rgba(16,185,129,0.4)] w-full max-w-lg">
-        <div className="border-b border-emerald-500/40 pb-3 mb-5 text-center">
-          <span className="text-[10px] md:text-xs tracking-widest text-emerald-400 uppercase font-mono">
-            Santuario de Yggdrasil — Versión Cinematográfica Suprema
-          </span>
-          <h1 className="text-xl md:text-2xl font-mono font-bold tracking-wider text-emerald-200 mt-1">
-            CONTROL DE LÍNEAS TEMPORALES
-          </h1>
-          <p className="text-[11px] text-emerald-400/70 mt-1 italic">
-            (Haz clic y arrastra para rotar y examinar el entorno en 360°)
-          </p>
-        </div>
-        
-        <form onSubmit={handleSubmit} className="space-y-4 font-mono text-xs md:text-sm">
-          <div>
-            <label className="block uppercase tracking-wider text-emerald-400 mb-1">Identificador de Variante</label>
-            <input 
-              type="text" 
-              required
-              placeholder="Ej. Loki L1130"
-              className="w-full px-3 py-2 bg-stone-900 border border-emerald-700/70 rounded text-emerald-100 focus:outline-none focus:border-emerald-400 shadow-inner"
-              value={form.nombre}
-              onChange={(e) => setForm({ ...form, nombre: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="block uppercase tracking-wider text-emerald-400 mb-1">Canal Cuántico (Correo)</label>
-            <input 
-              type="email" 
-              required
-              placeholder="loki@yggdrasil.nexus"
-              className="w-full px-3 py-2 bg-stone-900 border border-emerald-700/70 rounded text-emerald-100 focus:outline-none focus:border-emerald-400 shadow-inner"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="block uppercase tracking-wider text-emerald-400 mb-1">Registro de Anomalía Nexus</label>
-            <textarea 
-              rows="3"
-              required
-              placeholder="Describa la alteración en las ramas..."
-              className="w-full px-3 py-2 bg-stone-900 border border-emerald-700/70 rounded text-emerald-100 focus:outline-none focus:border-emerald-400 resize-none shadow-inner"
-              value={form.mensaje}
-              onChange={(e) => setForm({ ...form, mensaje: e.target.value })}
-            />
-          </div>
-          <button 
-            type="submit"
-            className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-stone-950 font-bold tracking-widest uppercase transition-colors rounded shadow-[0_0_20px_rgba(16,185,129,0.5)]"
-          >
-            Sostener Yggdrasil
-          </button>
-        </form>
+      {/* Botón para ocultar (barrer) o ampliar (mostrar) el panel */}
+      <button
+        type="button"
+        onClick={() => setPanelOculto((prev) => !prev)}
+        className="fixed top-4 right-4 z-30 px-4 py-2 font-mono text-xs uppercase tracking-widest bg-stone-950/90 hover:bg-stone-900 text-emerald-300 border border-emerald-500/70 rounded shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-colors cursor-pointer"
+      >
+        {panelOculto ? 'Ampliar panel' : 'Ver árbol'}
+      </button>
 
-        {respuesta && (
-          <div className="mt-4 p-3 bg-stone-900 border border-emerald-500 rounded text-center text-emerald-300 font-mono text-xs md:text-sm animate-pulse">
-            [YGGDRASIL RESPUESTA]: {respuesta}
+      {/* Contenedor del formulario con efecto tipo barrido */}
+      <div
+        style={{
+          clipPath: panelOculto ? 'inset(0 0 0 100%)' : 'inset(0 0 0 0)'
+        }}
+        className={`relative z-10 w-full max-w-lg transition-[clip-path,opacity,transform] duration-500 ease-in-out ${
+          panelOculto
+            ? 'opacity-0 translate-x-8 pointer-events-none'
+            : 'opacity-100 translate-x-0 pointer-events-auto'
+        }`}
+      >
+        <div className="bg-stone-950/85 backdrop-blur-xl p-6 md:p-8 rounded-none border-2 border-emerald-500/60 shadow-[0_0_90px_rgba(16,185,129,0.4)] w-full">
+          <div className="border-b border-emerald-500/40 pb-3 mb-5 text-center">
+            <span className="text-[10px] md:text-xs tracking-widest text-emerald-400 uppercase font-mono">
+              Santuario de Yggdrasil — Versión Cinematográfica Suprema
+            </span>
+            <h1 className="text-xl md:text-2xl font-mono font-bold tracking-wider text-emerald-200 mt-1">
+              CONTROL DE LÍNEAS TEMPORALES
+            </h1>
+            <p className="text-[11px] text-emerald-400/70 mt-1 italic">
+              (Haz clic y arrastra para rotar y examinar el entorno en 360°)
+            </p>
           </div>
-        )}
+
+          <form onSubmit={handleSubmit} className="space-y-4 font-mono text-xs md:text-sm">
+            <div>
+              <label className="block uppercase tracking-wider text-emerald-400 mb-1">Identificador de Variante</label>
+              <input
+                type="text"
+                required
+                placeholder="Ej. Loki L1130"
+                className="w-full px-3 py-2 bg-stone-900 border border-emerald-700/70 rounded text-emerald-100 focus:outline-none focus:border-emerald-400 shadow-inner"
+                value={form.nombre}
+                onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="block uppercase tracking-wider text-emerald-400 mb-1">Canal Cuántico (Correo)</label>
+              <input
+                type="email"
+                required
+                placeholder="loki@yggdrasil.nexus"
+                className="w-full px-3 py-2 bg-stone-900 border border-emerald-700/70 rounded text-emerald-100 focus:outline-none focus:border-emerald-400 shadow-inner"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="block uppercase tracking-wider text-emerald-400 mb-1">Registro de Anomalía Nexus</label>
+              <textarea
+                rows="3"
+                required
+                placeholder="Describa la alteración en las ramas..."
+                className="w-full px-3 py-2 bg-stone-900 border border-emerald-700/70 rounded text-emerald-100 focus:outline-none focus:border-emerald-400 resize-none shadow-inner"
+                value={form.mensaje}
+                onChange={(e) => setForm({ ...form, mensaje: e.target.value })}
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-stone-950 font-bold tracking-widest uppercase transition-colors rounded shadow-[0_0_20px_rgba(16,185,129,0.5)]"
+            >
+              Sostener Yggdrasil
+            </button>
+          </form>
+
+          {respuesta && (
+            <div className="mt-4 p-3 bg-stone-900 border border-emerald-500 rounded text-center text-emerald-300 font-mono text-xs md:text-sm animate-pulse">
+              [YGGDRASIL RESPUESTA]: {respuesta}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
